@@ -14,7 +14,15 @@
 -- limitations under the License.
 --
 
-ALTER TABLE "${table}" DROP CONSTRAINT "${table}_primary_key";
-CREATE INDEX "${table}_vr_idx" ON "${table}" ("version_rank");
-CREATE INDEX "${table}_ir_idx" ON "${table}" ("installed_rank");
-CREATE INDEX "${table}_s_idx" ON "${table}" ("success");
+CREATE TABLE address (
+    id bigint NOT NULL,
+    address character varying(256) NOT NULL
+);
+
+INSERT INTO address VALUES (1, '1. first
+2. second');
+
+COMMENT ON COLUMN address.address IS 'ATIVO = 1;
+CONCLUIDO = 2;
+CANCELADO = 0;';
+

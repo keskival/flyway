@@ -14,7 +14,12 @@
 -- limitations under the License.
 --
 
-ALTER TABLE "${table}" DROP CONSTRAINT "${table}_primary_key";
-CREATE INDEX "${table}_vr_idx" ON "${table}" ("version_rank");
-CREATE INDEX "${table}_ir_idx" ON "${table}" ("installed_rank");
-CREATE INDEX "${table}_s_idx" ON "${table}" ("success");
+CREATE TABLE cities (
+    name            text,
+    population      float,
+    altitude        int     -- in feet
+);
+
+CREATE TABLE cities_capitals (
+    state           char(2)
+) INHERITS (cities);

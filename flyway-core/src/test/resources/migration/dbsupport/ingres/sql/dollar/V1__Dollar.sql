@@ -14,7 +14,33 @@
 -- limitations under the License.
 --
 
-ALTER TABLE "${table}" DROP CONSTRAINT "${table}_primary_key";
-CREATE INDEX "${table}_vr_idx" ON "${table}" ("version_rank");
-CREATE INDEX "${table}_ir_idx" ON "${table}" ("installed_rank");
-CREATE INDEX "${table}_s_idx" ON "${table}" ("success");
+CREATE TABLE dollar (str VARCHAR(100));
+
+INSERT INTO dollar VALUES($$Hello 'quotes']$$);
+INSERT INTO dollar VALUES($abc$Hello 'quotes' and $'s$abc$);
+INSERT INTO dollar VALUES($$Hello ''quotes'$$);
+INSERT INTO dollar VALUES($$Hello $quotes$ $$);
+INSERT INTO dollar VALUES($abc$Hello $$quotes$$ $abc$);
+
+INSERT INTO dollar VALUES($$Hello '
+multi-line
+quotes;
+'$$);
+
+INSERT INTO dollar VALUES($$Hello
+multi-line
+quotes;
+$$);
+
+INSERT INTO dollar VALUES($abc$Hello ';
+multi-line;
+quotes;
+$abc$);
+
+INSERT INTO dollar VALUES(
+$abc$
+Hello ;
+multi-line;
+quotes;
+$abc$
+);

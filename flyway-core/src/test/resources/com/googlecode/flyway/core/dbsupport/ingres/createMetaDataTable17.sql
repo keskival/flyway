@@ -21,11 +21,12 @@ CREATE TABLE ${table} (
     script VARCHAR(200) NOT NULL,
     checksum INTEGER,
     installed_by VARCHAR(30) NOT NULL,
-    installed_on TIMESTAMP DEFAULT now(),
+    installed_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     execution_time INTEGER,
     state VARCHAR(15) NOT NULL,
-    current_version BOOLEAN NOT NULL,
-    CONSTRAINT ${table}_primary_key PRIMARY KEY (version),
-    CONSTRAINT ${table}_script_unique UNIQUE (script)
+    current_version BOOLEAN NOT NULL
 );
+ALTER TABLE "${table}" ADD CONSTRAINT "${table}_primary_key" PRIMARY KEY ("version");
+ALTER TABLE "${table}" ADD CONSTRAINT "${table}_primary_key" UNIQUE ("script");
+
 CREATE INDEX ${table}_current_version_index ON ${table} (current_version);

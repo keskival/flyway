@@ -14,7 +14,21 @@
 -- limitations under the License.
 --
 
-ALTER TABLE "${table}" DROP CONSTRAINT "${table}_primary_key";
-CREATE INDEX "${table}_vr_idx" ON "${table}" ("version_rank");
-CREATE INDEX "${table}_ir_idx" ON "${table}" ("installed_rank");
-CREATE INDEX "${table}_s_idx" ON "${table}" ("success");
+-- State transition function:
+CREATE  FUNCTION create_select(acc text, instr text) RETURNS text AS $$
+  BEGIN
+    IF acc IS NULL OR acc = '' THEN
+      RETURN replace(instr,'.','_') ;
+    ELSE
+      RETURN acc || ', ' || replace(instr,'.','_') ;
+    END IF;
+  END;
+$$ LANGUAGE plpgsql;
+
+-- Aggregate function
+CREATE AGGREGATE textcat_all(
+  basetype    = text,
+  sfunc       = create_select,
+  stype       = text,
+  initcond    = ''
+);

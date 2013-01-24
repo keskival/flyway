@@ -14,7 +14,24 @@
 -- limitations under the License.
 --
 
-ALTER TABLE "${table}" DROP CONSTRAINT "${table}_primary_key";
-CREATE INDEX "${table}_vr_idx" ON "${table}" ("version_rank");
-CREATE INDEX "${table}_ir_idx" ON "${table}" ("installed_rank");
-CREATE INDEX "${table}_s_idx" ON "${table}" ("success");
+CREATE TABLE test_data (
+  value VARCHAR(25) NOT NULL PRIMARY KEY
+);
+
+CREATE FUNCTION AddData() RETURNS INTEGER
+AS $$
+    BEGIN
+     INSERT INTO test_data (value) VALUES ('Hello');
+     RETURN 1;
+   END;
+ $$ LANGUAGE plpgsql;
+
+SELECT *  INTO TEMP adddata_temp_table FROM AddData() ;
+
+CREATE FUNCTION add(integer, integer) RETURNS integer
+    LANGUAGE sql IMMUTABLE STRICT
+    AS $_$select $1 + $2;$_$;
+
+CREATE FUNCTION inc(i integer) RETURNS VARCHAR(25)
+    LANGUAGE sql
+    AS $$SELECT * FROM test_data$$;    

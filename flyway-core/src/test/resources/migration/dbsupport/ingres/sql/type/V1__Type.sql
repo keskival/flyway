@@ -14,7 +14,13 @@
 -- limitations under the License.
 --
 
-ALTER TABLE "${table}" DROP CONSTRAINT "${table}_primary_key";
-CREATE INDEX "${table}_vr_idx" ON "${table}" ("version_rank");
-CREATE INDEX "${table}_ir_idx" ON "${table}" ("installed_rank");
-CREATE INDEX "${table}_s_idx" ON "${table}" ("success");
+CREATE TYPE test_type;
+
+CREATE FUNCTION test_type_in(cstring) RETURNS test_type AS
+'record_in'
+LANGUAGE internal STABLE STRICT COST 1;
+
+CREATE FUNCTION test_type_out(test_type) RETURNS cstring AS
+'record_out' LANGUAGE internal STABLE STRICT COST 1;
+
+CREATE TYPE test_type(INPUT=test_type_in, OUTPUT=test_type_out);
