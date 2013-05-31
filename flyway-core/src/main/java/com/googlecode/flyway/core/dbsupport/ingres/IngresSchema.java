@@ -16,9 +16,12 @@
 package com.googlecode.flyway.core.dbsupport.ingres;
 
 import com.googlecode.flyway.core.dbsupport.DbSupport;
+import com.googlecode.flyway.core.dbsupport.DbSupportFactory;
 import com.googlecode.flyway.core.dbsupport.JdbcTemplate;
 import com.googlecode.flyway.core.dbsupport.Schema;
 import com.googlecode.flyway.core.dbsupport.Table;
+import com.googlecode.flyway.core.util.logging.Log;
+import com.googlecode.flyway.core.util.logging.LogFactory;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -31,6 +34,11 @@ import java.util.List;
  * 
  */
 public class IngresSchema extends Schema {
+    /**
+     * Logger.
+     */
+    private static final Log LOG = LogFactory.getLog(IngresSchema.class);
+    
     /**
      * Creates a new Ingres schema.
      *
@@ -69,7 +77,16 @@ public class IngresSchema extends Schema {
     @Override
     protected void doClean() throws SQLException {
         for (Table table : allTables()) {
-            table.drop();
+        	// It would be better to test whether the table is a "system table" here, but Table-class does not contain that information.
+            if (table.getName().startsWith("iietab_")) {
+                /*
+                 * This is for skipping extended, Ingres-managed tables. Trying to drop them would lead to:
+                 * Flyway Error: com.googlecode.flyway.core.api.FlywayException: Unable to drop table "schema "."iietab_16d_16e ": DROP: 'iietab_16d_16e' is a system table.
+                 */
+                LOG.info("Skipped dropping table: " + table.getName() + ", because it is an Ingres-managed extension table for glob-types. It is dropped automatically when the parent table is dropped.");
+            } else {
+            	table.drop();
+            }
         }
 
         for (String statement : generateDropStatementsForSequences()) {
